@@ -1,52 +1,48 @@
-# `const-cstr` [![](https://img.shields.io/crates/v/const-cstr.svg)](https://crates.io/crates/const-cstr)
+# `const-cstr` [![](https://img.shields.io/crates/v/zombiezen-const-cstr.svg)](https://crates.io/crates/zombiezen-const-cstr)
+
 Create static C-compatible strings from Rust string literals.
 
-Usage
-------
+This is forked from [abonander/const-cstr][] to implement an API that conforms
+to the [Rust API Guidelines][] and takes advantage of [`const` functions][] to
+hide more implementation details.
+
+[abonander/const-cstr]: https://github.com/abonander/const-cstr
+[`const` functions]: https://doc.rust-lang.org/reference/items/functions.html#const-functions
+[Rust API Guidelines]: https://rust-lang.github.io/api-guidelines/
+
+## Usage
+
 Cargo.toml:
+
 ```toml
 [dependencies]
-const-cstr = "0.1"
+zombiezen-const-cstr = "1.0"
 ```
 
-Crate root:
+## Example
+
 ```rust
-#[macro_use] extern crate const_cstr;
-```
+use zombiezen_const_cstr::{const_cstr, ConstCStr};
 
-Example
--------
-```rust
- #[macro_use] extern crate const_cstr;
+use std::os::raw::c_char;
+use std::ffi::CStr;
 
- use std::os::raw::c_char;
- use std::ffi::CStr;
+/// Declare a constant:
+const HELLO_CSTR: ConstCStr = const_cstr!("Hello, world!");
 
- const_cstr! {
-     HELLO_CSTR = "Hello, world!";
+// Imagine this is an `extern "C"` function linked from some other lib.
+unsafe fn print_c_string(cstr: *const c_char) {
+    println!("{}", CStr::from_ptr(cstr).to_str().unwrap());
+}
 
-     // Multiple declarations can be made with one invocation.
-     // GOODNIGHT_CSTR = "Goodnight, sun!";
+fn main() {
+    let goodnight_cstr = const_cstr!("Goodnight, sun!");
 
-     // But only with the same visibility:
-     // pub GOODNIGHT_CSTR = "Goodnight, sun!";
-     // ^~~ Error: expected identifier, found `pub` 
- }
-
- // Imagine this is an `extern "C"` function linked from some other lib.
- unsafe fn print_c_string(cstr: *const c_char) {
-     println!("{}", CStr::from_ptr(cstr).to_str().unwrap());
- }
-
- fn main() {
-     // When just passed a literal, returns an rvalue instead.
-     let goodnight_cstr = const_cstr!("Goodnight, sun!");
-
-     unsafe {
-         print_c_string(HELLO_CSTR.as_ptr());
-         print_c_string(goodnight_cstr.as_ptr());
-     }
- }
+    unsafe {
+        print_c_string(HELLO_CSTR.as_ptr());
+        print_c_string(goodnight_cstr.as_ptr());
+    }
+}
  ```
 
  Prints:

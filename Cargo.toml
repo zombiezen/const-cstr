@@ -1,8 +1,12 @@
 [package]
-name = "const-cstr"
-version = "0.3.0"
-authors = ["Austin Bonander <austin.bonander@gmail.com>"]
+name = "zombiezen-const-cstr"
+version = "1.0.0"
+authors = [
+  "Austin Bonander <austin.bonander@gmail.com>",
+  "Ross Light <ross@zombiezen.com>",
+]
+edition = "2018"
 description = "Create static C-compatible strings from Rust string literals."
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/cybergeek94/const-cstr"
+repository = "https://github.com/zombiezen/const-cstr"
 
